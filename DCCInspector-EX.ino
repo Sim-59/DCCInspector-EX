@@ -810,15 +810,15 @@ void DecodePacket(Print &output, int inputPacket, bool isDifferentPacket) {
           sbTemp.print(F(" On"));
         else
           sbTemp.print(F(" Off"));
-      } else {  // Accessory Extended NMRA spec is not clear about address and
-                // instruction format !!!
+      } else {  // Accessory Extended NMRA spec 
+                // decoderAddress in accordance with NMRA S-9.2.1 and RCN-213
         sbTemp.print(F("Acc Ext "));
-        decoderAddress = (decoderAddress << 5) +
-                         ((instrByte1 & 0B01110000) >> 2) +
-                         ((instrByte1 & 0B00000110) >> 1);
+        decoderAddress = (decoderAddress << 2) + 
+                         (((~instrByte1) & 0B01110000) << 4) +
+                         ((instrByte1 & 0B00000110) >> 1) -3;
         sbTemp.print(decoderAddress);
         sbTemp.print(F(" Asp "));
-        sbTemp.print(dccPacket[inputPacket][3], BIN);
+        sbTemp.print(dccPacket[inputPacket][3]); // print aspect in decimal format
       }
       outputDecodedData = true;
     }
